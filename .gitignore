@@ -1,0 +1,11 @@
+.gradle/
+build/
+app/build/
+qemu/source/
+*.iso
+*.img
+*.qcow2
+*.apk
+local.properties
+.idea/
+.DS_Store
