@@ -1,0 +1,4 @@
+[submodule "engine/qemu"]
+	path = engine/qemu
+	url = https://gitlab.com/qemu-project/qemu.git
+	branch = v8.2.2
