@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PopVM</string>
+    <string name="start_linux">START LINUX</string>
+    <string name="stop_linux">STOP LINUX</string>
+    <string name="vm_title">ARM64 Linux Virtual Machine</string>
+    <string name="vm_status_idle">VM Stopped</string>
+    <string name="vm_status_running">VM Running (ARM64 virt)</string>
+    <string name="vm_status_starting">VM Starting...</string>
+</resources>

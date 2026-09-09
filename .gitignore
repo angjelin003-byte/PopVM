@@ -1,3 +1,5 @@
+node_modules/
+dist/
 .gradle/
 build/
 app/build/
@@ -9,3 +11,4 @@ qemu/source/
 local.properties
 .idea/
 .DS_Store
+bun.lock
