@@ -7,9 +7,42 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="bg_dark">#FF18181B</color>
+    
+    <!-- PopVM Dark Canvas Palette -->
+    <color name="bg_dark">#FF121212</color>
+    <color name="card_dark">#FF1E1E24</color>
     <color name="surface_dark">#FF27272A</color>
-    <color name="emerald_primary">#FF059669</color>
-    <color name="rose_primary">#FFE11D48</color>
+    <color name="terminal_dark">#FF0D1117</color>
+    <color name="border_dark">#FF3F3F46</color>
+    <color name="border_subtle">#FF2D2D32</color>
+
+    <!-- Accent and Status Colors -->
+    <color name="emerald_primary">#FF10B981</color>
+    <color name="emerald_dark">#FF059669</color>
+    <color name="emerald_glow">#3310B981</color>
+    <color name="rose_primary">#FFF43F5E</color>
+    <color name="rose_dark">#FFE11D48</color>
+    <color name="rose_glow">#33F43F5E</color>
+    <color name="cyan_accent">#FF06B6D4</color>
+    <color name="cyan_dark">#FF0891B2</color>
+    <color name="indigo_accent">#FF6366F1</color>
+    <color name="amber_accent">#FFF59E0B</color>
+    <color name="orange_accent">#FFF97316</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#FFF4F4F5</color>
+    <color name="text_secondary">#FFA1A1AA</color>
+    <color name="text_muted">#FF71717A</color>
+    
+    <!-- Terminal Syntax Colors -->
+    <color name="term_cmd">#FF22D3EE</color>
+    <color name="term_kernel">#FF34D399</color>
+    <color name="term_init">#FF38BDF8</color>
+    <color name="term_user">#FFFBBF24</color>
+    <color name="term_error">#FFF87171</color>
+    <color name="term_success">#FF6EE7B7</color>
+    <color name="term_boot">#FFD4D4D8</color>
+
     <color name="ic_launcher_background">#FF18181B</color>
 </resources>
+
