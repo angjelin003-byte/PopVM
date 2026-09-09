@@ -35,7 +35,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update -y --fix-missing || sudo apt-get update -y
+          # Remove problematic third-party repositories (e.g. Google Chrome) that cause transient Hash Sum mismatch errors on GitHub runners
+          sudo rm -f /etc/apt/sources.list.d/*chrome*.list /etc/apt/sources.list.d/*google*.list 2>/dev/null || true
+          sudo rm -rf /var/lib/apt/lists/*
+          sudo apt-get update -y -o Acquire::Retries=3 || sudo apt-get update -y --fix-missing || true
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             ninja-build meson python3 python3-pip python3-venv pkg-config \
             libglib2.0-dev libpixman-1-dev flex bison gettext git curl
