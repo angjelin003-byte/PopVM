@@ -1,0 +1,8 @@
+{
+  "name": "PopVM",
+  "description": "ARM64 Linux virtual machine manager powered by QEMU with console access and storage configuration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
