@@ -97,7 +97,7 @@
                     android:layout_width="8dp"
                     android:layout_height="8dp"
                     android:layout_marginEnd="6dp"
-                    android:background="@drawable/ic_launcher_round"
+                    android:background="@drawable/dot_indicator"
                     android:backgroundTint="@color/text_muted" />
 
                 <TextView
@@ -519,21 +519,21 @@
                             android:layout_width="8dp"
                             android:layout_height="8dp"
                             android:layout_marginEnd="5dp"
-                            android:background="@drawable/ic_launcher_round"
+                            android:background="@drawable/dot_indicator"
                             android:backgroundTint="#EF4444" />
 
                         <View
                             android:layout_width="8dp"
                             android:layout_height="8dp"
                             android:layout_marginEnd="5dp"
-                            android:background="@drawable/ic_launcher_round"
+                            android:background="@drawable/dot_indicator"
                             android:backgroundTint="#F59E0B" />
 
                         <View
                             android:layout_width="8dp"
                             android:layout_height="8dp"
                             android:layout_marginEnd="10dp"
-                            android:background="@drawable/ic_launcher_round"
+                            android:background="@drawable/dot_indicator"
                             android:backgroundTint="#10B981" />
 
                         <ImageView
