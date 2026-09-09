@@ -11,4 +11,5 @@
     <color name="surface_dark">#FF27272A</color>
     <color name="emerald_primary">#FF059669</color>
     <color name="rose_primary">#FFE11D48</color>
+    <color name="ic_launcher_background">#FF18181B</color>
 </resources>
