@@ -2,6 +2,7 @@ package com.example.popvm.services
 
 import android.os.Handler
 import android.os.Looper
+import com.example.popvm.models.DisplayMode
 import com.example.popvm.models.QemuConfigOptions
 import com.example.popvm.models.TerminalLine
 import com.example.popvm.models.VmStatus
@@ -13,6 +14,7 @@ class VmController(
     private var qemu: QemuProcess? = null
     private var status: VmStatus = VmStatus.STOPPED
     private var config: QemuConfigOptions = QemuConfig.getDefaultOptions()
+    private var displayMode: DisplayMode = DisplayMode.DESKTOP
     private val handler = Handler(Looper.getMainLooper())
 
     fun setCallbacks(onStatusChange: (VmStatus) -> Unit, onOutput: (TerminalLine) -> Unit) {
@@ -27,6 +29,12 @@ class VmController(
     fun getConfig(): QemuConfigOptions = config
 
     fun getStatus(): VmStatus = status
+
+    fun getDisplayMode(): DisplayMode = displayMode
+
+    fun setDisplayMode(mode: DisplayMode) {
+        this.displayMode = mode
+    }
 
     fun start() {
         if (qemu != null) return
@@ -45,14 +53,19 @@ class VmController(
             }
         )
 
-        val args = QemuConfig.buildArgs(config)
-        qemu?.start(args, config.memoryMb, config.smpCores)
+        qemu?.start(
+            distroName = config.distroName,
+            memoryMb = config.memoryMb,
+            smpCores = config.smpCores,
+            diskSizeGb = config.diskSizeGb,
+            isoPath = config.isoFile
+        )
 
         handler.postDelayed({
             if (status == VmStatus.STARTING) {
                 setStatus(VmStatus.RUNNING)
             }
-        }, 4500)
+        }, 3400)
     }
 
     fun stop() {

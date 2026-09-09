@@ -1,52 +1,36 @@
-import { QemuConfig } from './QemuConfig';
-import { QemuProcess } from './QemuProcess';
 import { QemuConfigOptions, TerminalLine, VmStatus } from '../types';
+import { QemuProcess } from './QemuProcess';
+import { QemuConfig } from './QemuConfig';
 
 export class VmController {
   private qemu: QemuProcess | null = null;
   private status: VmStatus = 'STOPPED';
-  private onStatusChange: ((status: VmStatus) => void) | null = null;
-  private onOutput: ((line: TerminalLine) => void) | null = null;
-  private config: QemuConfigOptions;
+  private config: QemuConfigOptions = QemuConfig.getDefaultOptions();
 
   constructor(
-    onStatusChange?: (status: VmStatus) => void,
-    onOutput?: (line: TerminalLine) => void
-  ) {
-    if (onStatusChange) this.onStatusChange = onStatusChange;
-    if (onOutput) this.onOutput = onOutput;
-    this.config = QemuConfig.getDefaultOptions();
-  }
+    private onStatusChange: (status: VmStatus) => void,
+    private onOutput: (line: TerminalLine) => void
+  ) {}
 
-  setCallbacks(
-    onStatusChange: (status: VmStatus) => void,
-    onOutput: (line: TerminalLine) => void
-  ) {
-    this.onStatusChange = onStatusChange;
-    this.onOutput = onOutput;
-  }
-
-  setConfig(options: Partial<QemuConfigOptions>) {
-    this.config = { ...this.config, ...options };
+  setConfig(options: QemuConfigOptions): void {
+    this.config = options;
   }
 
   getConfig(): QemuConfigOptions {
-    return { ...this.config };
+    return this.config;
   }
 
   getStatus(): VmStatus {
     return this.status;
   }
 
-  start() {
-    if (this.qemu != null) return;
+  start(): void {
+    if (this.qemu) return;
 
     this.setStatus('STARTING');
 
     this.qemu = new QemuProcess(
-      (line) => {
-        this.onOutput?.(line);
-      },
+      (line) => this.onOutput(line),
       (running) => {
         if (!running) {
           this.setStatus('STOPPED');
@@ -55,30 +39,35 @@ export class VmController {
       }
     );
 
-    const args = QemuConfig.buildArgs(this.config);
-    this.qemu.start(args, this.config.memoryMb, this.config.smpCores);
+    this.qemu.start(
+      this.config.distroName,
+      this.config.memoryMb,
+      this.config.smpCores,
+      this.config.diskSizeGb,
+      this.config.isoFile
+    );
 
     setTimeout(() => {
       if (this.status === 'STARTING') {
         this.setStatus('RUNNING');
       }
-    }, 4500);
+    }, 3400);
   }
 
-  stop() {
-    if (this.qemu == null) return;
+  stop(): void {
+    if (!this.qemu) return;
     this.setStatus('STOPPING');
     this.qemu.stop();
     this.qemu = null;
     this.setStatus('STOPPED');
   }
 
-  sendCommand(cmd: string) {
+  sendCommand(cmd: string): void {
     this.qemu?.executeCommand(cmd);
   }
 
-  private setStatus(newStatus: VmStatus) {
+  private setStatus(newStatus: VmStatus): void {
     this.status = newStatus;
-    this.onStatusChange?.(newStatus);
+    this.onStatusChange(newStatus);
   }
 }

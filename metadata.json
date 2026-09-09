@@ -1,6 +1,6 @@
 {
   "name": "PopVM",
-  "description": "ARM64 Linux virtual machine manager powered by QEMU with console access and storage configuration.",
+  "description": "64-bit Linux virtual machine manager to search ISO images, configure RAM, CPU, and virtual disk, and boot distros in landscape mode.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

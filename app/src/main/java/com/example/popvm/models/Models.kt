@@ -19,6 +19,21 @@ enum class TerminalLineType {
     SUCCESS
 }
 
+enum class DisplayMode {
+    DESKTOP,
+    CONSOLE
+}
+
+data class DistroPreset(
+    val id: String,
+    val name: String,
+    val description: String,
+    val desktopEnv: String,
+    val size: String,
+    val arch: String = "ARM64 (aarch64)",
+    val defaultIsoPath: String
+)
+
 data class TerminalLine(
     val id: String = UUID.randomUUID().toString(),
     val text: String,
@@ -26,16 +41,18 @@ data class TerminalLine(
 )
 
 data class QemuConfigOptions(
-    var arch: String = "qemu-system-aarch64",
+    var arch: String = "aarch64",
     var machine: String = "virt",
     var cpu: String = "max",
     var memoryMb: Int = 2048,
     var smpCores: Int = 2,
+    var diskSizeGb: Int = 3,
     var diskFile: String = "/data/user/0/com.example.popvm/files/linux.qcow2",
     var diskFormat: String = "qcow2",
-    var isoFile: String = "/data/user/0/com.example.popvm/files/linux.iso",
+    var distroName: String = "Pop!_OS 24.04 LTS (COSMIC Desktop)",
+    var isoFile: String = "/data/user/0/com.example.popvm/files/pop-os-arm64.iso",
     var bootOrder: String = "d",
-    var nographic: Boolean = true
+    var nographic: Boolean = false
 )
 
 data class DiskInfo(

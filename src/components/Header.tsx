@@ -1,98 +1,99 @@
-import React from 'react';
-import { Cpu, Settings, Terminal as TerminalIcon } from 'lucide-react';
+import { Monitor, RotateCw, Maximize2 } from 'lucide-react';
 import { VmStatus } from '../types';
 
 interface HeaderProps {
   status: VmStatus;
-  onOpenConfig: () => void;
-  showTerminal: boolean;
-  onToggleTerminal: () => void;
+  isLandscape: boolean;
+  onToggleLandscape: () => void;
+  isFullscreen: boolean;
+  onToggleFullscreen: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({
+export function Header({
   status,
-  onOpenConfig,
-  showTerminal,
-  onToggleTerminal
-}) => {
+  isLandscape,
+  onToggleLandscape,
+  isFullscreen,
+  onToggleFullscreen
+}: HeaderProps) {
   const getStatusBadge = () => {
     switch (status) {
       case 'RUNNING':
         return (
-          <span id="vm-status-badge" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             RUNNING
           </span>
         );
       case 'STARTING':
         return (
-          <span id="vm-status-badge" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-amber-950/80 border border-amber-500/30 text-amber-400">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
             BOOTING
           </span>
         );
       case 'STOPPING':
         return (
-          <span id="vm-status-badge" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/30">
-            <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-orange-950/80 border border-orange-500/30 text-orange-400">
+            <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
             STOPPING
           </span>
         );
       case 'STOPPED':
       default:
         return (
-          <span id="vm-status-badge" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-400 border border-zinc-700">
-            <span className="w-2 h-2 rounded-full bg-zinc-500"></span>
-            STOPPED
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-zinc-900 border border-zinc-800 text-zinc-400">
+            <span className="w-2 h-2 rounded-full bg-zinc-500" />
+            READY
           </span>
         );
     }
   };
 
   return (
-    <header className="w-full bg-zinc-900/90 backdrop-blur border-b border-zinc-800 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-14 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-lg tracking-wider">
-          <Cpu className="w-6 h-6" />
+        <div className="w-8 h-8 rounded-lg bg-cyan-950/80 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+          <Monitor className="w-4 h-4" />
         </div>
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight text-white">PopVM</h1>
-            <span className="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 font-mono">
-              ARM64 (QEMU)
+          <div className="flex items-center gap-2">
+            <h1 className="text-base font-bold text-zinc-100 tracking-tight">PopVM</h1>
+            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+              64-bit Virtual Machine
             </span>
           </div>
-          <p className="text-xs text-zinc-400">Virtual Machine Controller for Android & Web</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         {getStatusBadge()}
 
         <button
-          id="btn-toggle-terminal"
-          onClick={onToggleTerminal}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
-            showTerminal
-              ? 'bg-zinc-800 text-cyan-400 border-zinc-700'
-              : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white hover:bg-zinc-800'
+          onClick={onToggleLandscape}
+          className={`px-2.5 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+            isLandscape
+              ? 'bg-cyan-950/60 border-cyan-500/40 text-cyan-300'
+              : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
           }`}
-          title="Toggle Terminal View"
+          title="Toggle Landscape Display Mode"
         >
-          <TerminalIcon className="w-4 h-4" />
-          <span className="hidden sm:inline">Terminal</span>
+          <RotateCw className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">{isLandscape ? 'Landscape Mode' : 'Standard Mode'}</span>
         </button>
 
         <button
-          id="btn-open-config"
-          onClick={onOpenConfig}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition-colors"
-          title="Storage & QEMU Config"
+          onClick={onToggleFullscreen}
+          className={`p-1.5 rounded-lg border text-xs transition-colors cursor-pointer ${
+            isFullscreen
+              ? 'bg-zinc-800 border-zinc-700 text-zinc-200'
+              : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+          }`}
+          title="Toggle Fullscreen"
         >
-          <Settings className="w-4 h-4" />
-          <span className="hidden sm:inline">Config</span>
+          <Maximize2 className="w-4 h-4" />
         </button>
       </div>
     </header>
   );
-};
+}

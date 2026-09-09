@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainCoordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
@@ -12,11 +13,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Top Custom Header Bar -->
+        <!-- Top Header Bar -->
         <LinearLayout
             android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="56dp"
             android:background="@color/bg_dark"
             android:elevation="4dp"
             android:gravity="center_vertical"
@@ -24,16 +25,14 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <!-- Logo Icon -->
             <ImageView
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:background="@drawable/bg_card_inner"
                 android:padding="8dp"
-                android:src="@drawable/ic_cpu"
+                android:src="@drawable/ic_display"
                 app:tint="@color/cyan_accent" />
 
-            <!-- Title & Architecture -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -41,51 +40,29 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/titleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/titleText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/subtitleText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:background="#27272A"
-                        android:fontFamily="monospace"
-                        android:paddingStart="6dp"
-                        android:paddingTop="2dp"
-                        android:paddingEnd="6dp"
-                        android:paddingBottom="2dp"
-                        android:text="@string/app_subtitle"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
-                </LinearLayout>
+                    android:text="@string/app_name"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/subtitleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_desc"
+                    android:text="@string/app_subtitle"
                     android:textColor="@color/text_muted"
                     android:textSize="11sp" />
             </LinearLayout>
 
-            <!-- Live Status Pill Badge -->
+            <!-- Status Pill Badge -->
             <LinearLayout
                 android:id="@+id/statusBadgeLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginEnd="8dp"
+                android:layout_height="28dp"
                 android:background="@drawable/bg_pill_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -98,7 +75,7 @@
                     android:layout_height="8dp"
                     android:layout_marginEnd="6dp"
                     android:background="@drawable/dot_indicator"
-                    android:backgroundTint="@color/text_muted" />
+                    android:backgroundTint="@color/emerald_primary" />
 
                 <TextView
                     android:id="@+id/statusText"
@@ -111,15 +88,16 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Config Button -->
+            <!-- Screen Rotation Toggle -->
             <ImageButton
-                android:id="@+id/btnOpenConfig"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
+                android:id="@+id/btnRotateScreen"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/bg_card_inner"
-                android:contentDescription="Configure"
+                android:contentDescription="Rotate Screen"
                 android:padding="8dp"
-                android:src="@drawable/ic_settings"
+                android:src="@drawable/ic_rotate"
                 app:tint="@color/text_secondary" />
         </LinearLayout>
 
@@ -128,11 +106,13 @@
             android:layout_height="1dp"
             android:background="@color/border_subtle" />
 
-        <!-- Scrollable Main Content -->
+        <!-- 1. SETUP / CONFIGURATION CONTAINER (Shown before launch) -->
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutVmSetup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -140,76 +120,330 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- 1. VM Controller Card -->
+                <!-- Primary Option: ISO Selection Card -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_card"
-                    android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
-                    <ImageView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/bg_card_inner"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_power"
-                        app:tint="@color/cyan_accent" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/vm_title"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center"
-                        android:text="@string/vm_desc"
-                        android:textColor="@color/text_muted"
-                        android:textSize="12sp" />
-
-                    <!-- Action Buttons -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="10dp"
+                            android:src="@drawable/ic_iso"
+                            app:tint="@color/amber_accent" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/step_iso_title"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/step_iso_subtitle"
+                                android:textColor="@color/text_muted"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Search Input Bar -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_card_inner"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_search"
+                            app:tint="@color/text_muted" />
+
+                        <EditText
+                            android:id="@+id/etSearchIso"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:hint="@string/search_iso_hint"
+                            android:singleLine="true"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_muted"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <!-- Browse Storage Button -->
+                    <Button
+                        android:id="@+id/btnBrowseIso"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="8dp"
+                        android:backgroundTint="#27272A"
+                        android:drawableStart="@drawable/ic_folder"
+                        android:drawablePadding="8dp"
+                        android:text="@string/browse_storage"
+                        android:textAllCaps="false"
+                        android:textColor="@color/cyan_accent"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <!-- Selected ISO Display Banner -->
+                    <LinearLayout
+                        android:id="@+id/layoutSelectedIso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_distro_card_selected"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/ic_iso"
+                            app:tint="@color/cyan_accent" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSelectedDistroName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pop!_OS 24.04 LTS (COSMIC Desktop)"
+                                android:textColor="@color/text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvSelectedDistroDetails"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="2.8 GB • ARM64 (aarch64) • Ready to Boot"
+                                android:textColor="@color/cyan_accent"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Distro List / Chips -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="POPULAR LINUX DISTRIBUTIONS"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutDistroList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:orientation="vertical">
 
-                        <Button
-                            android:id="@+id/startButton"
-                            android:layout_width="240dp"
-                            android:layout_height="48dp"
-                            android:backgroundTint="@color/emerald_primary"
-                            android:elevation="4dp"
-                            android:text="@string/start_linux"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                        <!-- Item 1: Pop!_OS -->
+                        <LinearLayout
+                            android:id="@+id/cardDistroPopOs"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:background="@drawable/bg_distro_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
 
-                        <Button
-                            android:id="@+id/stopButton"
-                            android:layout_width="240dp"
-                            android:layout_height="48dp"
-                            android:layout_marginTop="10dp"
-                            android:backgroundTint="@color/rose_primary"
-                            android:elevation="2dp"
-                            android:enabled="false"
-                            android:text="@string/stop_linux"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:text="🐧"
+                                android:textSize="20sp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pop!_OS 24.04 LTS"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="COSMIC Desktop • 2.8 GB"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Item 2: Alpine -->
+                        <LinearLayout
+                            android:id="@+id/cardDistroAlpine"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:background="@drawable/bg_distro_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:text="🏔️"
+                                android:textSize="20sp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Alpine Linux 3.20 (GUI)"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Lightweight XFCE • 210 MB"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Item 3: Ubuntu -->
+                        <LinearLayout
+                            android:id="@+id/cardDistroUbuntu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:background="@drawable/bg_distro_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:text="🟠"
+                                android:textSize="20sp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Ubuntu 24.04 Desktop"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="GNOME Desktop • 3.2 GB"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Item 4: Debian -->
+                        <LinearLayout
+                            android:id="@+id/cardDistroDebian"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_distro_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:text="🌀"
+                                android:textSize="20sp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Debian 12 Bookworm"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="XFCE Workstation • 680 MB"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 2. Virtual Machine Environment & Quick Specs Bento Card -->
+                <!-- Second Group of Options: RAM, CPU, and Virtual Disk (1, 3, 5 GB) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -225,584 +459,752 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginEnd="8dp"
-                            android:src="@drawable/ic_cpu"
-                            app:tint="@color/cyan_accent" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/env_title"
-                            android:textColor="@color/text_primary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="#27272A"
-                            android:fontFamily="monospace"
-                            android:paddingStart="6dp"
-                            android:paddingTop="2dp"
-                            android:paddingEnd="6dp"
-                            android:paddingBottom="2dp"
-                            android:text="@string/qemu_version"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <!-- Bento Grid Row 1 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal">
-
-                        <!-- RAM Spec -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="6dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_card_inner"
-                            android:orientation="vertical"
-                            android:padding="10dp">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="6dp"
-                                    android:src="@drawable/ic_ram"
-                                    app:tint="@color/indigo_accent" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/memory_label"
-                                    android:textColor="@color/text_secondary"
-                                    android:textSize="11sp" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvMemoryMb"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/memory_default"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/memory_sub"
-                                android:textColor="@color/text_muted"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-
-                        <!-- Processors Spec -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_card_inner"
-                            android:orientation="vertical"
-                            android:padding="10dp">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="6dp"
-                                    android:src="@drawable/ic_cpu"
-                                    app:tint="@color/cyan_accent" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/processors_label"
-                                    android:textColor="@color/text_secondary"
-                                    android:textSize="11sp" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvSmpCores"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/processors_default"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/processors_sub"
-                                android:textColor="@color/text_muted"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- Bento Grid Row 2 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <!-- Storage Spec -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="6dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_card_inner"
-                            android:orientation="vertical"
-                            android:padding="10dp">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="6dp"
-                                    android:src="@drawable/ic_disk"
-                                    app:tint="@color/emerald_primary" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/storage_label"
-                                    android:textColor="@color/text_secondary"
-                                    android:textSize="11sp" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvStorageInfo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/storage_default"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/storage_sub"
-                                android:textColor="@color/text_muted"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-
-                        <!-- ISO Spec -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_card_inner"
-                            android:orientation="vertical"
-                            android:padding="10dp">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="6dp"
-                                    android:src="@drawable/ic_iso"
-                                    app:tint="@color/amber_accent" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/iso_label"
-                                    android:textColor="@color/text_secondary"
-                                    android:textSize="11sp" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvIsoInfo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="@string/iso_default"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/iso_sub"
-                                android:textColor="@color/text_muted"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- Modify Hardware Footer Link -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Command-line QEMU process manager"
-                            android:textColor="@color/text_muted"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:id="@+id/btnModifyHardware"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="?attr/selectableItemBackground"
-                            android:padding="4dp"
-                            android:text="@string/modify_hardware"
-                            android:textColor="@color/cyan_accent"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- 3. Interactive Terminal Card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="24dp"
-                    android:background="@drawable/bg_terminal"
-                    android:orientation="vertical">
-
-                    <!-- Terminal Title Bar -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:background="#161B22"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp">
-
-                        <!-- Window Dots -->
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:layout_marginEnd="5dp"
-                            android:background="@drawable/dot_indicator"
-                            android:backgroundTint="#EF4444" />
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:layout_marginEnd="5dp"
-                            android:background="@drawable/dot_indicator"
-                            android:backgroundTint="#F59E0B" />
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_marginEnd="10dp"
-                            android:background="@drawable/dot_indicator"
-                            android:backgroundTint="#10B981" />
+                            android:src="@drawable/ic_cpu"
+                            app:tint="@color/indigo_accent" />
 
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginEnd="6dp"
-                            android:src="@drawable/ic_terminal"
-                            app:tint="@color/cyan_accent" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:fontFamily="monospace"
-                            android:singleLine="true"
-                            android:text="@string/terminal_title"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp" />
-
-                        <!-- Auto-Scroll Button -->
-                        <ImageButton
-                            android:id="@+id/btnAutoScroll"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="Auto-scroll"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_cpu"
-                            app:tint="@color/cyan_accent" />
-
-                        <!-- Copy Button -->
-                        <ImageButton
-                            android:id="@+id/btnCopyLogs"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="Copy logs"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_copy"
-                            app:tint="@color/text_secondary" />
-
-                        <!-- Clear Button -->
-                        <ImageButton
-                            android:id="@+id/btnClearLogs"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="Clear"
-                            android:padding="6dp"
-                            android:src="@drawable/ic_trash"
-                            app:tint="@color/text_secondary" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/border_dark" />
-
-                    <!-- Monospace Terminal Scroll Output -->
-                    <ScrollView
-                        android:id="@+id/terminalScroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="260dp"
-                        android:background="@color/terminal_dark"
-                        android:padding="12dp">
-
-                        <TextView
-                            android:id="@+id/consoleOutput"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="monospace"
-                            android:lineSpacingExtra="2dp"
-                            android:text="[PopVM Ready]\nPress START LINUX to boot ARM64 QEMU kernel.\n"
-                            android:textColor="@color/text_primary"
-                            android:textSize="11sp" />
-                    </ScrollView>
-
-                    <!-- Quick Command Chips Bar -->
-                    <HorizontalScrollView
-                        android:id="@+id/quickChipsScroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#161B22"
-                        android:padding="8dp"
-                        android:scrollbars="none">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="6dp"
-                                android:fontFamily="monospace"
-                                android:text="Quick:"
+                                android:text="@string/step_hw_title"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/step_hw_subtitle"
                                 android:textColor="@color/text_muted"
                                 android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipHelp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="help"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipUname"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="uname -a"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipLscpu"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="lscpu"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipFree"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="free -h"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipDf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="df -h"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipQemuInfo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="qemu-info"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipReboot"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:layout_marginEnd="6dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="reboot"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/chipPoweroff"
-                                android:layout_width="wrap_content"
-                                android:layout_height="26dp"
-                                android:background="@drawable/bg_chip_command"
-                                android:fontFamily="monospace"
-                                android:gravity="center"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:text="poweroff"
-                                android:textColor="@color/text_primary"
-                                android:textSize="11sp" />
                         </LinearLayout>
-                    </HorizontalScrollView>
+                    </LinearLayout>
 
-                    <View
+                    <!-- 1. RAM Allocation Option -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="@string/ram_label"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/rgRamOptions"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/border_dark" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:orientation="horizontal">
 
-                    <!-- Interactive Shell Input Bar -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:background="#161B22"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="monospace"
-                            android:text="@string/cmd_prompt_prefix"
-                            android:textColor="@color/term_kernel"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-
-                        <EditText
-                            android:id="@+id/etCommandInput"
+                        <RadioButton
+                            android:id="@+id/rbRam1Gb"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="6dp"
-                            android:layout_marginEnd="6dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@null"
-                            android:fontFamily="monospace"
-                            android:hint="@string/cmd_input_hint"
-                            android:imeOptions="actionSend"
-                            android:inputType="text"
-                            android:singleLine="true"
+                            android:buttonTint="@color/indigo_accent"
+                            android:text="1 GB"
                             android:textColor="@color/text_primary"
-                            android:textColorHint="@color/text_muted"
                             android:textSize="12sp" />
 
-                        <ImageButton
-                            android:id="@+id/btnSendCommand"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:background="@drawable/bg_chip_command"
-                            android:contentDescription="@string/send"
-                            android:padding="8dp"
-                            android:src="@drawable/ic_send"
-                            app:tint="@color/cyan_accent" />
-                    </LinearLayout>
+                        <RadioButton
+                            android:id="@+id/rbRam2Gb"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/indigo_accent"
+                            android:checked="true"
+                            android:text="2 GB (Rec)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbRam4Gb"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/indigo_accent"
+                            android:text="4 GB"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+                    </RadioGroup>
+
+                    <!-- 2. CPU Usage Option -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/cpu_label"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/rgCpuOptions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rbCpu1Core"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/cyan_accent"
+                            android:text="1 Core"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbCpu2Cores"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/cyan_accent"
+                            android:checked="true"
+                            android:text="2 Cores (Rec)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbCpu4Cores"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/cyan_accent"
+                            android:text="4 Cores"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+                    </RadioGroup>
+
+                    <!-- 3. Virtual Disk Size Option: 1, 3, or 5 GB -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/disk_label"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/rgDiskOptions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rbDisk1Gb"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/emerald_primary"
+                            android:text="1 GB"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbDisk3Gb"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/emerald_primary"
+                            android:checked="true"
+                            android:text="3 GB (Rec)"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbDisk5Gb"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:buttonTint="@color/emerald_primary"
+                            android:text="5 GB"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+                    </RadioGroup>
                 </LinearLayout>
+
+                <!-- Launch / Boot Distro Action Button -->
+                <Button
+                    android:id="@+id/startButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="24dp"
+                    android:backgroundTint="@color/emerald_primary"
+                    android:drawableStart="@drawable/ic_power"
+                    android:drawablePadding="10dp"
+                    android:elevation="4dp"
+                    android:text="@string/launch_vm"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
+
+        <!-- 2. VIRTUAL MACHINE MONITOR CONTAINER (Active during execution) -->
+        <LinearLayout
+            android:id="@+id/layoutVmMonitor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- VM Top Controls Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="#18181B"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <TextView
+                    android:id="@+id/tvMonitorDistroTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="monospace"
+                    android:singleLine="true"
+                    android:text="Pop!_OS 24.04 (ARM64)"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <!-- Display Mode Toggle Tabs -->
+                <Button
+                    android:id="@+id/btnTabDesktop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:backgroundTint="@color/cyan_accent"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="Desktop"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bg_dark"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnTabConsole"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:backgroundTint="#27272A"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="Console"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <ImageButton
+                    android:id="@+id/btnVmReboot"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Reboot"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_restart"
+                    app:tint="@color/amber_accent" />
+
+                <Button
+                    android:id="@+id/stopButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:backgroundTint="@color/rose_primary"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/stop_vm"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- A. GRAPHICAL DESKTOP DISPLAY CONTAINER -->
+            <FrameLayout
+                android:id="@+id/layoutDesktopView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_desktop_wallpaper"
+                android:visibility="visible">
+
+                <!-- Linux Desktop Top Panel -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:layout_gravity="top"
+                    android:background="#D9161B22"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Activities"
+                        android:textColor="@color/white"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tvDesktopTitleBar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Pop!_OS COSMIC Desktop • 12:00 PM"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100% 🔋  📶"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <!-- Desktop Workspace Canvas with Interactive Window -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="54dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <!-- Interactive Desktop Window Card -->
+                    <LinearLayout
+                        android:id="@+id/desktopWindowCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_terminal"
+                        android:elevation="6dp"
+                        android:orientation="vertical">
+
+                        <!-- Window Header -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:background="#21262D"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp">
+
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_marginEnd="4dp"
+                                android:background="@drawable/dot_indicator"
+                                android:backgroundTint="#EF4444" />
+
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_marginEnd="4dp"
+                                android:background="@drawable/dot_indicator"
+                                android:backgroundTint="#F59E0B" />
+
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/dot_indicator"
+                                android:backgroundTint="#10B981" />
+
+                            <TextView
+                                android:id="@+id/tvActiveWindowTitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="monospace"
+                                android:text="System Monitor &amp; Terminal"
+                                android:textColor="@color/text_primary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <!-- Window Content Body -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#0D1117"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <!-- Live Virtual Hardware Resource Monitors -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="#161B22"
+                                android:orientation="horizontal"
+                                android:padding="8dp">
+
+                                <TextView
+                                    android:id="@+id/tvDesktopRamLive"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:fontFamily="monospace"
+                                    android:text="RAM: 2048 MB"
+                                    android:textColor="@color/indigo_accent"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tvDesktopCpuLive"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:fontFamily="monospace"
+                                    android:text="CPU: 2 Cores"
+                                    android:textColor="@color/cyan_accent"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tvDesktopDiskLive"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:fontFamily="monospace"
+                                    android:text="Disk: 3 GB"
+                                    android:textColor="@color/emerald_primary"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+
+                            <!-- Live Desktop Output / Interactive Shell -->
+                            <ScrollView
+                                android:id="@+id/desktopTerminalScroll"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/desktopConsoleOutput"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="monospace"
+                                    android:lineSpacingExtra="2dp"
+                                    android:text="[Linux Desktop Session Active]\nVirtual display resolution: 1920x1080 Landscape\nVirtIO KMS Framebuffer ready.\n"
+                                    android:textColor="@color/term_kernel"
+                                    android:textSize="11sp" />
+                            </ScrollView>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Linux Desktop Bottom Dock Launcher -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_card"
+                    android:elevation="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/dockTerminal"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:gravity="center"
+                        android:text="💻"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/dockFiles"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="📁"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/dockSystem"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="📊"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/dockBrowser"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="🌐"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/dockSettings"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="⚙️"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- B. SERIAL CONSOLE CONTAINER -->
+            <LinearLayout
+                android:id="@+id/layoutConsoleView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/terminal_dark"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Console Header Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:background="#161B22"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="@string/terminal_title"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+
+                    <Button
+                        android:id="@+id/btnCopyLogs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp"
+                        android:backgroundTint="#27272A"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/copy"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_primary"
+                        android:textSize="10sp" />
+
+                    <Button
+                        android:id="@+id/btnClearLogs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp"
+                        android:layout_marginStart="6dp"
+                        android:backgroundTint="#27272A"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/clear"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_primary"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <ScrollView
+                    android:id="@+id/terminalScroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/consoleOutput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:lineSpacingExtra="2dp"
+                        android:text="[Linux Serial Console Active]\n"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp" />
+                </ScrollView>
+
+                <!-- Quick Command Chips -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#161B22"
+                    android:padding="6dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/chipHelp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_chip_command"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="help"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/chipUname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_chip_command"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="uname -a"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/chipLscpu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_chip_command"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="lscpu"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/chipFree"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_chip_command"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="free -h"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/chipDf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_chip_command"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="df -h"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/chipUptime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_chip_command"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="uptime"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/chipLs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:background="@drawable/bg_chip_command"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="ls -la"
+                            android:textColor="@color/text_primary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Command Input Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="#161B22"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="@string/cmd_prompt_prefix"
+                        android:textColor="@color/term_kernel"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/etCommandInput"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:fontFamily="monospace"
+                        android:hint="@string/cmd_input_hint"
+                        android:imeOptions="actionSend"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnSendCommand"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_chip_command"
+                        android:contentDescription="@string/send"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_send"
+                        app:tint="@color/cyan_accent" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,26 +1,18 @@
 import { TerminalLine } from '../types';
 
-export type OutputCallback = (line: TerminalLine) => void;
-export type StateChangeCallback = (running: boolean) => void;
-
 export class QemuProcess {
-  private isRunning: boolean = false;
+  private isRunning = false;
   private pid: number | null = null;
-  private timeouts: number[] = [];
-  private onOutput: OutputCallback | null = null;
-  private onStateChange: StateChangeCallback | null = null;
-  private memoryMb: number = 2048;
-  private smpCores: number = 2;
+  private distroName = 'Pop!_OS 24.04 LTS';
+  private memoryMb = 2048;
+  private smpCores = 2;
+  private diskSizeGb = 3;
+  private timers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(onOutput?: OutputCallback, onStateChange?: StateChangeCallback) {
-    if (onOutput) this.onOutput = onOutput;
-    if (onStateChange) this.onStateChange = onStateChange;
-  }
-
-  setCallbacks(onOutput: OutputCallback, onStateChange: StateChangeCallback) {
-    this.onOutput = onOutput;
-    this.onStateChange = onStateChange;
-  }
+  constructor(
+    private onOutput: (line: TerminalLine) => void,
+    private onStateChange: (running: boolean) => void
+  ) {}
 
   getIsRunning(): boolean {
     return this.isRunning;
@@ -30,339 +22,219 @@ export class QemuProcess {
     return this.pid;
   }
 
-  start(args: string[], memoryMb: number = 2048, smpCores: number = 2) {
+  start(
+    distroName: string,
+    memoryMb: number = 2048,
+    smpCores: number = 2,
+    diskSizeGb: number = 3,
+    isoPath: string = ''
+  ): void {
     if (this.isRunning) return;
 
     this.isRunning = true;
-    this.pid = Math.floor(10000 + Math.random() * 90000);
+    this.pid = Math.floor(Math.random() * 90000) + 10000;
+    this.distroName = distroName;
     this.memoryMb = memoryMb;
     this.smpCores = smpCores;
-    this.onStateChange?.(true);
+    this.diskSizeGb = diskSizeGb;
+    this.onStateChange(true);
 
+    const isoName = isoPath ? isoPath.split('/').pop() : 'linux.iso';
     this.emitLine({
-      id: crypto.randomUUID(),
-      text: `$ ${args.join(' ')}`,
-      type: 'cmd',
+      id: Math.random().toString(),
+      text: `Booting virtual machine from ${isoName}...`,
+      type: 'cmd'
     });
 
     const bootSequence: { text: string; delay: number; type: TerminalLine['type'] }[] = [
-      { text: `[PopVM] Spawning QEMU process [PID ${this.pid}]...`, delay: 100, type: 'init' },
-      { text: `[PopVM] VirtIO disk mounted (linux.qcow2)`, delay: 220, type: 'init' },
-      { text: `[PopVM] VirtIO cdrom mounted (linux.iso)`, delay: 350, type: 'init' },
-      { text: `[PopVM] Memory mapped: ${this.memoryMb}MB RAM, SMP: ${this.smpCores} cores (virt, aarch64)`, delay: 480, type: 'init' },
-      { text: 'EFI stub: Booting Linux Kernel...', delay: 700, type: 'boot' },
-      { text: 'EFI stub: Using DTB from configuration table', delay: 850, type: 'boot' },
-      { text: 'EFI stub: Exiting boot services and installing virtual address map...', delay: 1000, type: 'boot' },
-      { text: `[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd083]`, delay: 1200, type: 'kernel' },
-      { text: `[    0.000000] Linux version 6.6.137-popvm-aarch64 (gcc version 13.2.0) #1 SMP PREEMPT`, delay: 1350, type: 'kernel' },
-      { text: `[    0.000000] Machine model: linux,dummy-virt`, delay: 1500, type: 'kernel' },
-      { text: `[    0.000000] Memory: ${this.memoryMb * 1024}K/${this.memoryMb * 1024}K available (${Math.floor(this.memoryMb * 0.9)}MB RAM free)`, delay: 1650, type: 'kernel' },
-      { text: `[    0.000000] smp: Bringing up secondary CPUs ...`, delay: 1800, type: 'kernel' },
-      { text: `[    0.000000] smp: Brought up 1 node, ${this.smpCores} CPUs`, delay: 1950, type: 'kernel' },
-      { text: `[    0.000000] CPU features: detected: GICv3, PMUv3, CRC32, AES, SHA2`, delay: 2100, type: 'kernel' },
-      { text: `[    0.042180] devtmpfs: initialized`, delay: 2250, type: 'kernel' },
-      { text: `[    0.098412] virtio_blk virtio0: [vda] 41943040 512-byte logical blocks (21.5 GB)`, delay: 2400, type: 'kernel' },
-      { text: `[    0.142018] virtio_net virtio1: eth0: renamed from eth0`, delay: 2550, type: 'kernel' },
-      { text: `[    0.201490] EXT4-fs (vda1): mounted filesystem with ordered data mode`, delay: 2700, type: 'kernel' },
-      { text: `systemd 255.4-1ubuntu8 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR)`, delay: 2900, type: 'init' },
-      { text: `[  OK  ] Started Virtual Console Setup.`, delay: 3100, type: 'success' },
-      { text: `[  OK  ] Reached target System Initialization.`, delay: 3300, type: 'success' },
-      { text: `[  OK  ] Started D-Bus System Message Bus.`, delay: 3500, type: 'success' },
-      { text: `[  OK  ] Started OpenSSH Server daemon.`, delay: 3700, type: 'success' },
-      { text: `[  OK  ] Reached target Multi-User System.`, delay: 3900, type: 'success' },
-      { text: `Pop!_OS GNU/Linux 24.04 LTS popvm ttyAMA0`, delay: 4100, type: 'init' },
-      { text: `popvm login: root (automatic login)`, delay: 4300, type: 'init' },
-      { text: `Welcome to PopVM Linux Virtual Machine (aarch64)!`, delay: 4500, type: 'success' },
-      { text: `Type 'help' for built-in commands or 'poweroff' to halt.`, delay: 4650, type: 'init' },
-      { text: `root@popvm:~# `, delay: 4750, type: 'user' },
+      { text: `Initializing Virtual Hardware (64-bit ARM virt)...`, delay: 80, type: 'init' },
+      { text: `RAM: ${memoryMb} MB | Cores: ${smpCores} vCPU | Disk: ${diskSizeGb} GB Virtual Storage`, delay: 180, type: 'init' },
+      { text: `Attached ISO: ${isoName}`, delay: 300, type: 'init' },
+      { text: `VirtIO GPU Display Adapter: Active (1920x1080 Landscape)`, delay: 450, type: 'init' },
+      { text: `EFI Stub: Loading Linux kernel image...`, delay: 650, type: 'boot' },
+      { text: `EFI Stub: Mounting boot initramfs and virtual address map...`, delay: 850, type: 'boot' },
+      { text: `[    0.000000] Booting Linux on physical CPU 0x0000000000`, delay: 1050, type: 'kernel' },
+      { text: `[    0.000000] Linux version 6.6.137 (gcc 13.2.0) #1 SMP PREEMPT`, delay: 1200, type: 'kernel' },
+      { text: `[    0.000000] Memory available: ${memoryMb * 1024}K (${memoryMb - 210}MB RAM free)`, delay: 1350, type: 'kernel' },
+      { text: `[    0.000000] SMP: Initialized ${smpCores} virtual processor cores`, delay: 1500, type: 'kernel' },
+      { text: `[    0.081240] virtio_blk virtio0: [vda] ${diskSizeGb * 2097152} blocks (${diskSizeGb}.0 GB)`, delay: 1700, type: 'kernel' },
+      { text: `[    0.142018] virtio_gpu: initialized KMS display framebuffer`, delay: 1850, type: 'kernel' },
+      { text: `[    0.198412] virtio_net: eth0 network link ready`, delay: 2000, type: 'kernel' },
+      { text: `systemd 255 running in graphical target mode`, delay: 2200, type: 'init' },
+      { text: `[  OK  ] Started Graphical Display Manager (Wayland/X11).`, delay: 2400, type: 'success' },
+      { text: `[  OK  ] Mounted Virtual Storage Filesystem (${diskSizeGb} GB).`, delay: 2600, type: 'success' },
+      { text: `[  OK  ] Started D-Bus System Message Bus.`, delay: 2800, type: 'success' },
+      { text: `[  OK  ] Reached target Graphical Desktop Environment.`, delay: 3000, type: 'success' },
+      { text: `Welcome to ${distroName}!`, delay: 3200, type: 'success' },
+      { text: `Desktop session is live in landscape mode. Terminal console is ready.`, delay: 3400, type: 'init' },
+      { text: `root@popvm:~# `, delay: 3500, type: 'user' }
     ];
 
     bootSequence.forEach((step) => {
-      const timer = window.setTimeout(() => {
+      const timer = setTimeout(() => {
         if (!this.isRunning) return;
         this.emitLine({
-          id: crypto.randomUUID(),
+          id: Math.random().toString(),
           text: step.text,
-          type: step.type,
+          type: step.type
         });
       }, step.delay);
-      this.timeouts.push(timer);
+      this.timers.push(timer);
     });
   }
 
-  executeCommand(cmd: string) {
+  executeCommand(cmd: string): void {
     if (!this.isRunning) return;
 
     const trimmed = cmd.trim();
     this.emitLine({
-      id: crypto.randomUUID(),
+      id: Math.random().toString(),
       text: `root@popvm:~# ${trimmed}`,
-      type: 'user',
+      type: 'user'
     });
 
     if (!trimmed) {
-      this.emitLine({
-        id: crypto.randomUUID(),
-        text: `root@popvm:~# `,
-        type: 'user',
-      });
+      this.emitLine({ id: Math.random().toString(), text: `root@popvm:~# `, type: 'user' });
       return;
     }
 
-    const parts = trimmed.split(' ');
+    const parts = trimmed.split(' ').filter(Boolean);
     const main = parts[0].toLowerCase();
 
     switch (main) {
       case 'help':
         this.emitLines([
-          'PopVM Linux Command Shell Emulator (QEMU aarch64)',
+          `PopVM Linux Shell (${this.distroName})`,
           'Available commands:',
-          '  uname [-a]        Show Linux system & architecture info',
-          '  lscpu             Display CPU architecture and core details',
-          '  free [-h|-m]      Display memory (RAM) usage',
-          '  df [-h]           Display virtual disk usage',
-          '  uptime            Display VM uptime and load averages',
+          '  uname [-a]        Show Linux system info',
+          '  lscpu             Display processor cores & architecture',
+          '  free [-h|-m]      Display memory (RAM) allocation',
+          `  df [-h]           Display virtual disk (${this.diskSizeGb} GB) usage`,
+          '  uptime            Display VM uptime & load',
           '  ls [-la]          List directory contents',
-          '  cat <file>        Read file (/etc/os-release, /proc/cpuinfo, /proc/version)',
-          '  dmesg             Show kernel ring buffer logs',
-          '  ps [aux]          List running processes',
-          '  qemu-info         Display active QEMU emulator runtime configuration',
+          '  cat <file>        Read /etc/os-release or /proc/cpuinfo',
+          '  ps                List running processes & desktop manager',
           '  clear             Clear terminal screen',
-          '  poweroff, halt    Gracefully shutdown the virtual machine',
-          '  reboot            Reboot virtual machine'
+          '  reboot            Reboot virtual machine',
+          '  poweroff, halt    Shutdown virtual machine'
         ]);
         break;
-
       case 'uname':
-        if (parts[1] === '-a' || parts.length === 1) {
-          this.emitLine({
-            id: crypto.randomUUID(),
-            text: 'Linux popvm 6.6.137-popvm-aarch64 #1 SMP PREEMPT aarch64 GNU/Linux',
-            type: 'boot'
-          });
-        } else {
-          this.emitLine({
-            id: crypto.randomUUID(),
-            text: 'Linux',
-            type: 'boot'
-          });
-        }
+        this.emitLine({
+          id: Math.random().toString(),
+          text: 'Linux popvm 6.6.137-popvm-arm64 #1 SMP PREEMPT aarch64 GNU/Linux',
+          type: 'boot'
+        });
         break;
-
       case 'lscpu':
         this.emitLines([
           'Architecture:                    aarch64',
           'CPU op-mode(s):                  64-bit',
-          'Byte Order:                      Little Endian',
           `CPU(s):                          ${this.smpCores}`,
-          'On-line CPU(s) list:             0-' + (this.smpCores - 1),
-          'Vendor ID:                       ARM',
-          'Model name:                      Cortex-A78 (virt, max)',
-          'Model:                           0',
-          'Thread(s) per core:              1',
+          'Model name:                      Cortex-A78 (Virtual CPU)',
           `Core(s) per socket:              ${this.smpCores}`,
-          'Socket(s):                       1',
-          'Flags:                           fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma'
+          'Flags:                           fp asimd aes pmull sha1 sha2 crc32 atomics'
         ]);
         break;
-
       case 'free':
         this.emitLines([
           '               total        used        free      shared  buff/cache   available',
-          `Mem:         ${this.memoryMb}M        184M       ${this.memoryMb - 240}M         12M         56M       ${this.memoryMb - 190}M`,
+          `Mem:         ${this.memoryMb}M        240M       ${this.memoryMb - 320}M         16M         64M       ${this.memoryMb - 260}M`,
           'Swap:            0B          0B          0B'
         ]);
         break;
-
       case 'df':
         this.emitLines([
           'Filesystem     1K-blocks      Used Available Use% Mounted on',
-          'udev             1013444         0   1013444   0% /dev',
+          `/dev/vda1        ${this.diskSizeGb * 1024 * 1024}    480000  ${this.diskSizeGb * 1024 * 1024 - 480000}   12% /`,
           'tmpfs             205208       980    204228   1% /run',
-          '/dev/vda1       20511312   2488100  17023212  13% /',
-          'tmpfs            1026040         0   1026040   0% /dev/shm',
-          '/dev/sr0          663552    663552         0 100% /media/cdrom'
+          '/dev/sr0         2800000   2800000         0 100% /media/cdrom'
         ]);
         break;
-
       case 'uptime':
         this.emitLine({
-          id: crypto.randomUUID(),
-          text: ` 16:48:10 up 2 min,  1 user,  load average: 0.08, 0.03, 0.01`,
+          id: Math.random().toString(),
+          text: ' 12:00:00 up 1 min,  1 user,  load average: 0.04, 0.02, 0.00',
           type: 'boot'
         });
         break;
-
       case 'ls':
-        this.emitLines([
-          'total 28',
-          'drwxr-xr-x 4 root root 4096 Sep  9 16:47 .',
-          'drwxr-xr-x 19 root root 4096 Sep  9 16:45 ..',
-          '-rw-r--r-- 1 root root 3106 Apr 22 2024 .bashrc',
-          '-rw-r--r-- 1 root root  161 Jul  9 2019 .profile',
-          'drwxr-xr-x 2 root root 4096 Sep  9 16:47 demo',
-          'drwx------ 2 root root 4096 Sep  9 16:47 .ssh'
-        ]);
+        this.emitLines(['Desktop  Documents  Downloads  Music  Pictures  Videos  installer.desktop']);
         break;
-
       case 'cat':
-        const file = parts[1];
-        if (file === '/etc/os-release') {
+        if (parts[1] === '/etc/os-release') {
           this.emitLines([
-            'NAME="Pop!_OS"',
-            'VERSION="24.04 LTS"',
-            'ID=pop',
-            'ID_LIKE="ubuntu debian"',
-            'PRETTY_NAME="Pop!_OS 24.04 LTS (ARM64)"',
+            `NAME="${this.distroName}"`,
+            `PRETTY_NAME="${this.distroName}"`,
+            'ID=linux',
             'VERSION_ID="24.04"',
-            'HOME_URL="https://pop.system76.com/"',
-            'SUPPORT_URL="https://support.system76.com/"'
-          ]);
-        } else if (file === '/proc/version') {
-          this.emitLine({
-            id: crypto.randomUUID(),
-            text: 'Linux version 6.6.137-popvm-aarch64 (gcc version 13.2.0) #1 SMP PREEMPT',
-            type: 'boot'
-          });
-        } else if (file === '/proc/cpuinfo') {
-          this.emitLines([
-            'processor       : 0',
-            'BogoMIPS        : 40.00',
-            'Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp',
-            'CPU implementer : 0x41',
-            'CPU architecture: 8',
-            'CPU variant     : 0x3',
-            'CPU part        : 0xd08',
-            'CPU revision    : 2',
-            '',
-            ...(this.smpCores > 1 ? [
-              'processor       : 1',
-              'BogoMIPS        : 40.00',
-              'Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp',
-              'CPU implementer : 0x41',
-              'CPU architecture: 8',
-              'CPU variant     : 0x3',
-              'CPU part        : 0xd08',
-              'CPU revision    : 2',
-            ] : [])
+            'HOME_URL="https://popvm.local"'
           ]);
         } else {
           this.emitLine({
-            id: crypto.randomUUID(),
-            text: `cat: ${file || ''}: No such file or directory`,
+            id: Math.random().toString(),
+            text: `cat: ${parts[1] || ''}: No such file or directory`,
             type: 'error'
           });
         }
         break;
-
       case 'ps':
         this.emitLines([
           '  PID TTY          TIME CMD',
           '    1 ?        00:00:01 systemd',
-          '  381 ?        00:00:00 systemd-journal',
-          '  412 ?        00:00:00 systemd-udevd',
-          '  620 ?        00:00:00 dbus-daemon',
-          '  780 ttyAMA0  00:00:00 login',
-          '  842 ttyAMA0  00:00:00 bash',
-          '  915 ttyAMA0  00:00:00 ps'
+          '  412 ?        00:00:00 cosmic-session',
+          '  520 ?        00:00:00 wayland-display',
+          '  780 ttyAMA0  00:00:00 bash',
+          '  890 ttyAMA0  00:00:00 ps'
         ]);
         break;
-
-      case 'qemu-info':
-        this.emitLines([
-          'QEMU Emulator Process Information:',
-          `  PID:         ${this.pid}`,
-          '  Arch:        aarch64 (ARM 64-bit)',
-          '  Machine:     virt (QEMU ARM Virtual Machine)',
-          '  CPU model:   max',
-          `  Memory:      ${this.memoryMb} MB`,
-          `  vCPUs (SMP): ${this.smpCores} cores`,
-          '  Primary HDD: virtio-blk (linux.qcow2)',
-          '  CD-ROM:      virtio-blk (linux.iso)',
-          '  Console:     -nographic (serial ttyAMA0)'
-        ]);
-        break;
-
-      case 'clear':
-        // Handled in component
-        break;
-
       case 'poweroff':
       case 'halt':
         this.stop();
         return;
-
       case 'reboot':
-        this.emitLine({
-          id: crypto.randomUUID(),
-          text: 'The system is going down for reboot NOW!',
-          type: 'init'
-        });
+        this.emitLine({ id: Math.random().toString(), text: 'Rebooting virtual machine...', type: 'init' });
         this.stop();
         setTimeout(() => {
-          this.start([
-            "qemu-system-aarch64",
-            "-machine", "virt",
-            "-cpu", "max",
-            "-m", `${this.memoryMb}`,
-            "-smp", `${this.smpCores}`,
-            "-drive", "if=virtio,file=/data/user/0/com.example.popvm/files/linux.qcow2,format=qcow2",
-            "-cdrom", "/data/user/0/com.example.popvm/files/linux.iso",
-            "-boot", "d",
-            "-nographic"
-          ], this.memoryMb, this.smpCores);
-        }, 1200);
+          this.start(this.distroName, this.memoryMb, this.smpCores, this.diskSizeGb);
+        }, 1000);
         return;
-
       default:
         this.emitLine({
-          id: crypto.randomUUID(),
+          id: Math.random().toString(),
           text: `bash: ${trimmed}: command not found. Type 'help' for available commands.`,
           type: 'error'
         });
         break;
     }
 
-    this.emitLine({
-      id: crypto.randomUUID(),
-      text: `root@popvm:~# `,
-      type: 'user',
+    this.emitLine({ id: Math.random().toString(), text: `root@popvm:~# `, type: 'user' });
+  }
+
+  private emitLines(lines: string[]): void {
+    lines.forEach((line) => {
+      this.emitLine({ id: Math.random().toString(), text: line, type: 'boot' });
     });
   }
 
-  private emitLines(lines: string[]) {
-    lines.forEach((l) => {
-      this.emitLine({
-        id: crypto.randomUUID(),
-        text: l,
-        type: 'boot',
-      });
-    });
+  private emitLine(line: TerminalLine): void {
+    this.onOutput(line);
   }
 
-  private emitLine(line: TerminalLine) {
-    this.onOutput?.(line);
-  }
-
-  stop() {
-    this.timeouts.forEach((t) => clearTimeout(t));
-    this.timeouts = [];
+  stop(): void {
+    this.timers.forEach(clearTimeout);
+    this.timers = [];
 
     if (this.isRunning) {
       this.emitLine({
-        id: crypto.randomUUID(),
-        text: `[PopVM] Sending SIGTERM to QEMU process [PID ${this.pid}]...`,
+        id: Math.random().toString(),
+        text: 'ACPI shutdown signal received. Virtual machine stopped.',
         type: 'init'
-      });
-      this.emitLine({
-        id: crypto.randomUUID(),
-        text: '[PopVM] ACPI shutdown signal delivered. QEMU process terminated.',
-        type: 'cmd'
       });
     }
 
     this.isRunning = false;
     this.pid = null;
-    this.onStateChange?.(false);
+    this.onStateChange(false);
   }
 }

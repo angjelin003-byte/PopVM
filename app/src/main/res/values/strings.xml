@@ -1,46 +1,37 @@
 <resources>
     <string name="app_name">PopVM</string>
-    <string name="app_subtitle">ARM64 (QEMU)</string>
-    <string name="app_desc">Virtual Machine Controller for Android</string>
+    <string name="app_subtitle">64-bit Virtual Machine</string>
+    <string name="app_desc">Run Linux desktop distributions and ISO images virtually</string>
     
-    <string name="start_linux">START LINUX</string>
-    <string name="stop_linux">STOP LINUX</string>
-    <string name="starting_linux">STARTING...</string>
-    <string name="stopping_linux">STOPPING...</string>
+    <string name="step_iso_title">1. Search &amp; Select Linux ISO</string>
+    <string name="step_iso_subtitle">Select an ISO distribution image or browse device storage</string>
+    <string name="search_iso_hint">Search distro or custom ISO...</string>
+    <string name="browse_storage">Browse Device Storage (.iso)</string>
     
-    <string name="vm_title">Virtual Machine Controller</string>
-    <string name="vm_desc">Run ARM64 Linux under QEMU emulation with VirtIO storage and serial console</string>
+    <string name="step_hw_title">2. Hardware &amp; Virtual Disk Configuration</string>
+    <string name="step_hw_subtitle">Allocate RAM, processor cores, and virtual storage capacity</string>
     
-    <string name="vm_status_idle">STOPPED</string>
+    <string name="ram_label">RAM ALLOCATION</string>
+    <string name="cpu_label">PROCESSOR CORES</string>
+    <string name="disk_label">VIRTUAL DISK SIZE (QCOW2)</string>
+    
+    <string name="launch_vm">BOOT DISTRO IN LANDSCAPE</string>
+    <string name="starting_vm">BOOTING DISTRO...</string>
+    <string name="stop_vm">SHUTDOWN VM</string>
+    <string name="reboot_vm">REBOOT</string>
+    
+    <string name="vm_status_idle">READY</string>
     <string name="vm_status_running">RUNNING</string>
     <string name="vm_status_starting">BOOTING</string>
     <string name="vm_status_stopping">STOPPING</string>
 
-    <string name="env_title">Virtual Machine Environment</string>
-    <string name="qemu_version">QEMU v9.2.0</string>
-    <string name="memory_label">Memory</string>
-    <string name="memory_default">2048 MB RAM</string>
-    <string name="memory_sub">VirtIO Balloon Driver</string>
+    <string name="mode_desktop">🖥️ Graphical Desktop</string>
+    <string name="mode_console">💻 Serial Console</string>
     
-    <string name="processors_label">Processors</string>
-    <string name="processors_default">2 vCPU Cores</string>
-    <string name="processors_sub">Cortex-A78 (max)</string>
-
-    <string name="storage_label">Storage (qcow2)</string>
-    <string name="storage_default">linux.qcow2</string>
-    <string name="storage_sub">20 GB Virtual Disk</string>
-
-    <string name="iso_label">ISO Image</string>
-    <string name="iso_default">linux.iso</string>
-    <string name="iso_sub">Boot order: -boot d</string>
-
-    <string name="modify_hardware">Modify Hardware &amp; ISO &gt;</string>
-    <string name="terminal_title">console: /dev/ttyAMA0 (PopVM Linux aarch64)</string>
+    <string name="terminal_title">Linux Serial Console (ttyAMA0)</string>
     <string name="cmd_prompt_prefix">root@popvm:~#</string>
-    <string name="cmd_input_hint">Type Linux command (or \'help\')...</string>
+    <string name="cmd_input_hint">Type command (e.g. \'help\', \'lscpu\')...</string>
     <string name="send">Send</string>
-    <string name="auto_scroll">Auto-scroll</string>
-    <string name="copy">Copy</string>
     <string name="clear">Clear</string>
-    <string name="config">Config</string>
+    <string name="copy">Copy Logs</string>
 </resources>
